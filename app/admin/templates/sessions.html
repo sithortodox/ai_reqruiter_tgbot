@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Сессии{% endblock %}
+{% block content %}
+<h1>Сессии интервью</h1>
+<div class="sub">Последние 500 сессий
+  {%- if candidate_id %} · <a href="/sessions">сбросить фильтр</a>{% endif %}
+</div>
+{% if rows %}
+<table>
+  <tr>
+    <th>Дата</th><th>Кандидат</th><th>Вакансия</th><th>Состояние</th>
+    <th>Маршрут</th><th>Оценка</th><th></th>
+  </tr>
+  {% for s, name, uname in rows %}
+  <tr>
+    <td>{{ s.started_at.strftime('%d.%m.%Y %H:%M') if s.started_at else '—' }}</td>
+    <td>
+      {% if uname %}@{{ uname }}{% else %}{{ name or '—' }}{% endif %}
+    </td>
+    <td><code>{{ s.vacancy_id[:8] }}…</code></td>
+    <td><code>{{ s.status }}</code></td>
+    <td>
+      {% if s.candidate_status == 'recommended' %}<span class="badge b-green">recommended</span>
+      {% elif s.candidate_status == 'not_recommended' %}<span class="badge b-muted">not_recommended</span>
+      {% elif s.candidate_status == 'manual_review' %}<span class="badge b-yellow">manual_review</span>
+      {% else %}<span class="badge b-muted">—</span>{% endif %}
+    </td>
+    <td>{% set rep = report_by_session.get(s.id) %}{% if rep and rep.score is not none %}{{ rep.score }}/10{% else %}—{% endif %}</td>
+    <td><a href="/candidates/{{ s.candidate_id }}">карточка →</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Сессий пока нет</div>
+{% endif %}
+{% endblock %}

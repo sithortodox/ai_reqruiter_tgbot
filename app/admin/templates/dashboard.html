@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Дашборд{% endblock %}
+{% block content %}
+<h1>Дашборд</h1>
+<div class="sub">Статистика интервью и маршрутизации кандидатов</div>
+
+<div class="cards">
+  <div class="card"><div class="num">{{ total_candidates }}</div><div class="lbl">Кандидатов</div></div>
+  <div class="card"><div class="num">{{ total_sessions }}</div><div class="lbl">Сессий</div></div>
+  <div class="card"><div class="num">{{ pending_outbox }}</div><div class="lbl">В очереди доставки</div></div>
+  <div class="card"><div class="num">{{ vacancies|length }}</div><div class="lbl">Вакансий</div></div>
+</div>
+
+<h2>Сессии по состоянию</h2>
+{% if status_rows %}
+<table>
+  <tr><th>Состояние</th><th>Количество</th></tr>
+  {% for st, cnt in status_rows %}
+  <tr><td><code>{{ st }}</code></td><td>{{ cnt }}</td></tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Сессий пока нет</div>
+{% endif %}
+
+<h2>Кандидаты по маршрутизации</h2>
+{% if rec_rows %}
+<table>
+  <tr><th>Статус</th><th>Количество</th></tr>
+  {% for st, cnt in rec_rows %}
+  <tr>
+    <td>
+      {% if st == 'recommended' %}<span class="badge b-green">recommended</span>
+      {% elif st == 'not_recommended' %}<span class="badge b-muted">not_recommended</span>
+      {% elif st == 'manual_review' %}<span class="badge b-yellow">manual_review</span>
+      {% else %}<span class="badge b-muted">{{ st }}</span>{% endif %}
+    </td>
+    <td>{{ cnt }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Кандидатов пока нет</div>
+{% endif %}
+
+<h2>Вакансии</h2>
+{% if vacancies %}
+<table>
+  <tr><th>Название</th><th>Slug</th><th>Активна</th></tr>
+  {% for v in vacancies %}
+  <tr>
+    <td>{{ v.title }}</td>
+    <td><code>{{ v.slug }}</code></td>
+    <td>{% if v.active %}<span class="badge b-green">да</span>{% else %}<span class="badge b-muted">нет</span>{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Вакансии не созданы</div>
+{% endif %}
+{% endblock %}

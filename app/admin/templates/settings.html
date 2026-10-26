@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Настройки{% endblock %}
+{% block content %}
+<h1>Настройки</h1>
+<div class="sub">Текущая конфигурация приложения (read-only; меняется через переменные окружения)</div>
+<table>
+  <tr><th>Параметр</th><th>Значение</th></tr>
+  <tr><td>Провайдер LLM</td><td><code>{{ settings.llm_provider }}</code></td></tr>
+  <tr><td>LLM base URL</td><td><code>{{ settings.llm_base_url }}</code></td></tr>
+  <tr><td>LLM модель</td><td><code>{{ settings.llm_model }}</code></td></tr>
+  <tr><td>LLM timeout (с)</td><td><code>{{ settings.llm_timeout_seconds }}</code></td></tr>
+  <tr><td>Порог по умолчанию</td><td><code>{{ settings.default_score_threshold }}</code></td></tr>
+  <tr><td>Лимит резюме (МБ)</td><td><code>{{ settings.max_resume_size_mb }}</code></td></tr>
+  <tr><td>Тайм-аут интервью (мин)</td><td><code>{{ settings.interview_timeout_minutes }}</code></td></tr>
+  <tr><td>Напоминание (мин)</td><td><code>{{ settings.interview_reminder_minutes }}</code></td></tr>
+  <tr><td>Чат рекрутеров</td><td><code>{{ settings.recruiters_chat_id or 'не задан' }}</code></td></tr>
+  <tr><td>Админ-веб</td><td><code>{{ 'включена' if settings.admin_web_enabled else 'выключена' }}</code> :{{ settings.admin_web_port }}</td></tr>
+  <tr><td>Уровень логов</td><td><code>{{ settings.log_level }}</code></td></tr>
+  <tr><td>Срок хранения ПД</td><td><code>{{ settings.retention_days }}</code> дней</td></tr>
+  <tr><td>API-ключ LLM</td><td>{% if settings.llm_api_key %}<span class="badge b-green">задан (демо-режим выключен)</span>{% else %}<span class="badge b-yellow">не задан — демо-режим заглушки</span>{% endif %}</td></tr>
+</table>
+
+<h2>Персональные данные</h2>
+<div class="sub">Очистка ПД с истёкшим сроком хранения. Удаление отдельного кандидата — в его карточке.</div>
+<form method="post" action="/retention/purge"
+      onsubmit="return confirm('Запустить очистку ПД по сроку хранения?');">
+  <button class="btn" type="submit">🧹 Запустить очистку сейчас</button>
+</form>
+{% endblock %}

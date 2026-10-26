@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Кандидат{% endblock %}
+{% block content %}
+<h1>{{ candidate.full_name or 'Без имени' }}</h1>
+<div class="sub">
+  {% if candidate.telegram_username %}@{{ candidate.telegram_username }} · {% endif %}
+  Telegram <code>{{ candidate.telegram_id }}</code>
+  {% if candidate.contact_data %} · контакт {{ candidate.contact_data }}{% endif %}
+  · статус:
+  {% if candidate.status == 'recommended' %}<span class="badge b-green">recommended</span>
+  {% elif candidate.status == 'not_recommended' %}<span class="badge b-muted">not_recommended</span>
+  {% elif candidate.status == 'manual_review' %}<span class="badge b-yellow">manual_review</span>
+  {% else %}<span class="badge b-muted">{{ candidate.status }}</span>{% endif %}
+</div>
+
+<form method="post" action="/candidates/{{ candidate.id }}/delete" style="margin:14px 0"
+      onsubmit="return confirm('Удалить все персональные данные кандидата? Отчёты будут обезличены.');">
+  <button class="btn btn-danger" type="submit">🗑 Удалить персональные данные</button>
+</form>
+
+<h2>Сессии</h2>
+{% if sessions %}
+<table>
+  <tr><th>Дата</th><th>Состояние</th><th>Завершена</th><th>Статус решения</th><th>Сводка</th></tr>
+  {% for s in sessions %}
+  <tr>
+    <td>{{ s.started_at.strftime('%d.%m.%Y %H:%M') if s.started_at else '—' }}</td>
+    <td><code>{{ s.status }}</code></td>
+    <td>{{ s.completed_at.strftime('%d.%m.%Y %H:%M') if s.completed_at else '—' }}</td>
+    <td><code>{{ s.candidate_status or '—' }}</code></td>
+    <td>{{ (report_by_session.get(s.id).report_json.get('summary', '') if report_by_session.get(s.id) else '')|truncate(160) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Сессий нет</div>
+{% endif %}
+
+<h2>Ответы и анализ</h2>
+{% for s in sessions if report_by_session.get(s.id) %}
+  {% set rep = report_by_session[s.id] %}
+  {% set payload = rep.report_json or {} %}
+  <div class="card" style="margin-bottom:14px">
+    <div class="lbl">Итоговая сводка ({{ s.status }}{% if rep.score is not none %} · оценка {{ rep.score }}/10{% endif %})</div>
+    <p>{{ payload.get('summary', '') }}</p>
+    {% if payload.get('strengths') %}
+      <div class="lbl">Сильные стороны</div>
+      <ul>{% for x in payload['strengths'] %}<li>{{ x }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% if payload.get('gaps') %}
+      <div class="lbl">Пробелы</div>
+      <ul>{% for x in payload['gaps'] %}<li>{{ x }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% if payload.get('reasoning_summary') %}
+      <div class="lbl">Обоснование</div>
+      <p>{{ payload['reasoning_summary'] }}</p>
+    {% endif %}
+  </div>
+{% endfor %}
+
+<h2>Журнал событий</h2>
+{% if audits %}
+<table>
+  <tr><th>Время</th><th>Тип</th><th>Данные</th></tr>
+  {% for a in audits %}
+  <tr>
+    <td>{{ a.created_at.strftime('%d.%m.%Y %H:%M:%S') if a.created_at else '—' }}</td>
+    <td><code>{{ a.event_type }}</code></td>
+    <td><code>{{ a.event_data }}</code></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Событий нет</div>
+{% endif %}
+{% endblock %}

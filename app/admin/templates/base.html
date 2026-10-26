@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AI Interview{% endblock %} · Админ-панель</title>
+  <style>
+    :root {
+      --bg: #0f1115; --panel: #171a21; --border: #262b36;
+      --text: #e6e9ef; --muted: #8b93a7;
+      --accent: #4f8cff; --green: #2ecc71; --red: #e74c3c; --yellow: #f1c40f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 15px/1.5 "Segoe UI", system-ui, sans-serif;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .layout { display: flex; min-height: 100vh; }
+    nav {
+      width: 220px; background: var(--panel); border-right: 1px solid var(--border);
+      padding: 20px 0; flex-shrink: 0;
+    }
+    nav .brand { padding: 0 20px 16px; font-weight: 700; font-size: 16px; }
+    nav a.item {
+      display: block; padding: 9px 20px; color: var(--muted);
+    }
+    nav a.item:hover, nav a.item.active {
+      color: var(--text); background: rgba(79,140,255,.12); text-decoration: none;
+      border-right: 2px solid var(--accent);
+    }
+    main { flex: 1; padding: 28px 32px; max-width: 1200px; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    h2 { font-size: 16px; margin: 26px 0 10px; color: var(--muted); font-weight: 600; }
+    .sub { color: var(--muted); margin-bottom: 24px; font-size: 13px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px;
+    }
+    .card .num { font-size: 26px; font-weight: 700; }
+    .card .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel);
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden; font-size: 14px; }
+    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      font-size: 12px; border: 1px solid var(--border); white-space: nowrap;
+    }
+    .b-green { color: var(--green); border-color: var(--green); }
+    .b-red { color: var(--red); border-color: var(--red); }
+    .b-yellow { color: var(--yellow); border-color: var(--yellow); }
+    .b-muted { color: var(--muted); }
+    code { background: rgba(255,255,255,.06); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+    .empty { color: var(--muted); padding: 18px; background: var(--panel);
+      border: 1px dashed var(--border); border-radius: 10px; text-align: center; }
+    .filters { margin-bottom: 14px; display: flex; gap: 12px; align-items: center; font-size: 13px; }
+    .btn {
+      display: inline-block; padding: 7px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--panel); color: var(--text);
+      font-size: 13px; cursor: pointer;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+    .btn-danger { color: var(--red); border-color: rgba(231,76,60,.5); }
+    .btn-danger:hover { border-color: var(--red); color: var(--red); background: rgba(231,76,60,.08); }
+    @media (max-width: 760px) {
+      .layout { flex-direction: column; }
+      nav { width: 100%; display: flex; overflow-x: auto; padding: 0; }
+      nav .brand { display: none; }
+      nav a.item { white-space: nowrap; border-right: none; }
+      main { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <div class="brand">🤖 AI Interview</div>
+    <a class="item" href="/">Дашборд</a>
+    <a class="item" href="/vacancies">Вакансии</a>
+    <a class="item" href="/sessions">Сессии</a>
+    <a class="item" href="/messages">Очередь доставки</a>
+    <a class="item" href="/audit">Журнал аудита</a>
+    <a class="item" href="/settings">Настройки</a>
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>

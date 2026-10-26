@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Очередь доставки{% endblock %}
+{% block content %}
+<h1>Очередь доставки</h1>
+<div class="sub">Исходящие сообщения (outbox): карточки рекрутерам и финальные письма кандидатам</div>
+{% if messages %}
+<table>
+  <tr><th>Время</th><th>Чат</th><th>Статус</th><th>Попыток</th><th>Текст</th></tr>
+  {% for m in messages %}
+  <tr>
+    <td>{{ m.created_at.strftime('%d.%m.%Y %H:%M:%S') if m.created_at else '—' }}</td>
+    <td><code>{{ m.chat_id }}</code></td>
+    <td>
+      {% if m.status == 'sent' %}<span class="badge b-green">отправлено</span>
+      {% elif m.status == 'failed' %}<span class="badge b-red">ошибка</span>
+      {% else %}<span class="badge b-yellow">в очереди</span>{% endif %}
+    </td>
+    <td>{{ m.attempts }}{% if m.last_error %}<br><small>{{ m.last_error|truncate(80) }}</small>{% endif %}</td>
+    <td>{{ m.text|truncate(200) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Очередь пуста</div>
+{% endif %}
+{% endblock %}

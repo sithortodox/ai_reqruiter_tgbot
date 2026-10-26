@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Вакансии{% endblock %}
+{% block content %}
+<h1>Вакансии</h1>
+<div class="sub">Активные вакансии и их параметры</div>
+{% if vacancies %}
+<table>
+  <tr><th>Название</th><th>Slug</th><th>Обязательные требования</th><th>Порог</th><th>Активна</th></tr>
+  {% for v in vacancies %}
+  <tr>
+    <td>{{ v.title }}</td>
+    <td><code>{{ v.slug }}</code></td>
+    <td>{{ (v.mandatory_requirements or [])|join('; ')|truncate(120) }}</td>
+    <td>{{ (v.evaluation_config or {}).get('score_threshold', '—') }}</td>
+    <td>{% if v.active %}<span class="badge b-green">да</span>{% else %}<span class="badge b-muted">нет</span>{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Вакансии не созданы</div>
+{% endif %}
+{% endblock %}
